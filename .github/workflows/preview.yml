@@ -1,0 +1,43 @@
+name: Preview
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions: { contents: read }
+
+jobs:
+  preview:
+    name: Publish preview package
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test
+
+      - name: Verify dependency signatures
+        run: npm audit signatures
+
+      - name: Prune package.json
+        uses: igordanchenko/actions/prune-package-json@d460545dc978b327e8d2b2cfe0acb86075a660c1 # v1.3.2
+
+      - name: Publish preview
+        run: npx --yes -- pkg-pr-new publish --no-template

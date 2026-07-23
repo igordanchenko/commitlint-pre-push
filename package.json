@@ -1,0 +1,53 @@
+{
+  "name": "commitlint-pre-push",
+  "version": "0.0.0-semantic-release",
+  "description": "Lint exactly the commits being pushed — an accurate commitlint wrapper for the pre-push git hook",
+  "author": "Igor Danchenko",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "commitlint-pre-push": "lib/cli.js"
+  },
+  "files": [
+    "lib"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": "github:igordanchenko/commitlint-pre-push",
+  "homepage": "https://github.com/igordanchenko/commitlint-pre-push",
+  "bugs": "https://github.com/igordanchenko/commitlint-pre-push/issues",
+  "funding": "https://github.com/sponsors/igordanchenko",
+  "scripts": {
+    "lint": "eslint",
+    "typecheck": "tsc",
+    "test": "node --test",
+    "ci": "npm run lint && npm run typecheck && npm run test",
+    "prepare": "husky"
+  },
+  "peerDependencies": {
+    "@commitlint/cli": "^19 || ^20 || ^21"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.1",
+    "@commitlint/config-conventional": "21.2.0",
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.13.3",
+    "eslint": "10.7.0",
+    "globals": "17.7.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.1.1",
+    "prettier": "3.9.6",
+    "typescript": "7.0.2"
+  },
+  "keywords": [
+    "commitlint",
+    "pre-push",
+    "git",
+    "hooks",
+    "git-hooks",
+    "husky",
+    "lint",
+    "conventional-commits"
+  ]
+}

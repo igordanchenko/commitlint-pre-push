@@ -1,0 +1,77 @@
+name: Bug report
+description: Report a reproducible problem.
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe the issue you're experiencing.
+    validations:
+      required: true
+
+  - type: input
+    id: package-version
+    attributes:
+      label: commitlint-pre-push version
+      description: Output of `npm ls commitlint-pre-push`.
+      placeholder: e.g., 1.2.0
+    validations:
+      required: true
+
+  - type: input
+    id: commitlint-version
+    attributes:
+      label: commitlint version
+      description: Output of `npx commitlint --version`.
+      placeholder: e.g., 21.2.1
+    validations:
+      required: true
+
+  - type: input
+    id: git-version
+    attributes:
+      label: Git version
+      description: Output of `git --version`.
+      placeholder: e.g., 2.55.0
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node version
+      description: Output of `node -v`.
+      placeholder: e.g., v22.22.2
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: e.g., macOS 26.4.1
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: |
+        Provide the exact steps to reproduce — ideally a sequence of git commands that sets up a
+        repository in the relevant state (branches, remotes, commits) and the `git push` command
+        that triggers the issue. Include your pre-push hook setup (e.g., the `.husky/pre-push` file)
+        and commitlint configuration if relevant. Keep it as small as possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-vs-actual
+    attributes:
+      label: Expected vs. actual behavior
+      description: |
+        Describe which commits you expected to be linted (or not linted) and what actually happened.
+        Include the hook output verbatim.
+    validations:
+      required: true
