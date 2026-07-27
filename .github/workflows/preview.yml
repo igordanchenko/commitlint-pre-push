@@ -34,7 +34,7 @@ jobs:
       - name: Test
         run: npm run test
 
-      - name: Verify dependency signatures
+      - name: Audit signatures
         run: npm audit signatures
 
       - name: Prune package.json
