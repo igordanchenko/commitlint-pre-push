@@ -6,8 +6,8 @@
   steps separately)
 - `npm run lint` — ESLint
 - `npm run typecheck` — `tsc` (checks JSDoc types, `noEmit`)
-- `npm run test` — full test suite (`node --test`); slow (~2 min) because each
-  test builds real git repo fixtures in temp dirs
+- `npm run test` — full test suite (`node --test`); ~10s, spent almost entirely
+  on spawning real git to build repo fixtures in temp dirs
 - Single test: `node --test --test-name-pattern="force push"`
 
 ## What this is
@@ -21,8 +21,16 @@ package.
 
 ## Architecture
 
-Two source files:
+Three source files:
 
+- `lib/which.js` — a `which(name)` PATH lookup (no spawn). Executables are
+  spawned by the absolute path this resolves once at startup, never by bare
+  name: on macOS, every PATH directory that _doesn't_ contain the binary costs
+  ~20ms per spawn, and npm prepends several `node_modules/.bin` entries, so an
+  `npm test` run paid ~14 misses on every git call (~50s → ~10s). The tests use
+  it for their own fixture setup too. It deliberately mirrors libuv's lookup
+  (including trying only `.com`/`.exe` on Windows, _not_ `PATHEXT`) so it can
+  only ever find the binary a bare-name spawn would have reached.
 - `lib/git.js` — thin `spawnSync` git helpers. `output()` throws on failure;
   `maybeOutput()` returns `undefined`.
 - `lib/cli.js` — everything else. The core flow in `main()`:

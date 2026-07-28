@@ -2,14 +2,20 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import os from "node:os";
-import { delimiter, dirname, join } from "node:path";
+import { delimiter, dirname, isAbsolute, join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
+
+import { which } from "../lib/which.js";
 
 const projectRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const cliPath = join(projectRoot, "lib", "cli.js");
 
 const ZERO_SHA = "0".repeat(40);
+
+// by absolute path: a bare name would make every one of the hundreds of
+// fixture-setup calls redo the PATH lookup, which is expensive under npm
+const gitBinary = which("git") ?? "git";
 
 // Isolate git from the developer's global/system config. os.devNull would be
 // ideal, but Git for Windows can't open `\\.\nul` as a config file
@@ -61,7 +67,7 @@ function run(command, args, { cwd, env: environment = env, input = "", shell = f
  * @returns {Promise<string>}
  */
 async function git(cwd, ...args) {
-  const result = await run("git", args, { cwd });
+  const result = await run(gitBinary, args, { cwd });
   assert.equal(result.status, 0, `\`git ${args.join(" ")}\` failed: ${result.stderr}`);
   return result.stdout.trim();
 }
@@ -136,6 +142,27 @@ async function createFixture(context) {
     refUpdate: (ref, localSha, remoteSha) => `${ref} ${localSha} ${ref} ${remoteSha}\n`,
   };
 }
+
+// Without this the PATH lookup is unfalsifiable: every caller falls back to the
+// bare name, so a resolver that silently found nothing - on Windows especially,
+// where the extension handling differs - would leave the whole suite green.
+describe("which", () => {
+  it("resolves git to an absolute path that actually runs", async () => {
+    const resolved = which("git");
+
+    assert.ok(resolved, "git was not found on the PATH");
+    assert.ok(isAbsolute(resolved), `expected an absolute path, got "${resolved}"`);
+
+    const result = await run(resolved, ["--version"], { cwd: projectRoot });
+
+    assert.equal(result.status, 0, combinedOutput(result));
+    assert.match(result.stdout, /^git version /);
+  });
+
+  it("returns undefined when the executable is not on the PATH", () => {
+    assert.equal(which("commitlint-pre-push-no-such-executable"), undefined);
+  });
+});
 
 describe("commitlint-pre-push", { concurrency: Math.min(os.availableParallelism(), 4) }, () => {
   it("passes a normal branch update with a good commit", async (context) => {
