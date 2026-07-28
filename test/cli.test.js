@@ -164,7 +164,7 @@ describe("which", () => {
   });
 });
 
-describe("commitlint-pre-push", { concurrency: Math.min(os.availableParallelism(), 4) }, () => {
+describe("commitlint-pre-push", { concurrency: os.availableParallelism() }, () => {
   it("passes a normal branch update with a good commit", async (context) => {
     const fixture = await createFixture(context);
     await fixture.commit("feat: initial");
