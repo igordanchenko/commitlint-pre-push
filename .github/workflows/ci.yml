@@ -47,6 +47,9 @@ jobs:
       - name: Test
         run: npm run test
 
+      - name: Audit signatures
+        run: npm audit signatures
+
   ci:
     name: CI
     if: always()
