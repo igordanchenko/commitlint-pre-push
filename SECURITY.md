@@ -16,7 +16,7 @@ Please report vulnerabilities privately via GitHub's
 This creates a private advisory visible only to the maintainers.
 
 If you cannot use GitHub's private reporting for any reason, email
-jujube.bond.26@icloud.com with the subject line
+onetime_metro.5a@icloud.com with the subject line
 `[commitlint-pre-push] security report`.
 
 You can expect a response within 7 days of your report.
