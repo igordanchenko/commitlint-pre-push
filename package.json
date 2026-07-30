@@ -2,6 +2,10 @@
   "name": "commitlint-pre-push",
   "version": "0.0.0-semantic-release",
   "description": "Lint exactly the commits being pushed — an accurate commitlint wrapper for the pre-push git hook",
+  "repository": "github:igordanchenko/commitlint-pre-push",
+  "homepage": "https://github.com/igordanchenko/commitlint-pre-push",
+  "bugs": "https://github.com/igordanchenko/commitlint-pre-push/issues",
+  "funding": "https://github.com/sponsors/igordanchenko",
   "author": "Igor Danchenko",
   "license": "MIT",
   "type": "module",
@@ -14,10 +18,6 @@
   "engines": {
     "node": ">=22"
   },
-  "repository": "github:igordanchenko/commitlint-pre-push",
-  "homepage": "https://github.com/igordanchenko/commitlint-pre-push",
-  "bugs": "https://github.com/igordanchenko/commitlint-pre-push/issues",
-  "funding": "https://github.com/sponsors/igordanchenko",
   "scripts": {
     "lint": "eslint",
     "typecheck": "tsc",
