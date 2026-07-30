@@ -1,22 +1,18 @@
-<p align="center">
-  <img alt="" src=".github/assets/logo.webp" width="180" height="180" />
-</p>
-
-<h1 align="center">
-  commitlint-pre-push
-</h1>
-
 <div align="center">
+
+<img alt="" src=".github/assets/logo.webp" width="180" height="180" />
+
+# commitlint-pre-push
 
 [![Package](https://img.shields.io/npm/v/commitlint-pre-push.svg?color=blue)](https://www.npmjs.com/package/commitlint-pre-push)
 [![Node](https://img.shields.io/node/v/commitlint-pre-push.svg?color=blue)](https://www.npmjs.com/package/commitlint-pre-push)
 [![CI](https://img.shields.io/github/actions/workflow/status/igordanchenko/commitlint-pre-push/ci.yml?branch=main&label=CI&color=blue)](https://github.com/igordanchenko/commitlint-pre-push/actions/workflows/ci.yml)
 [![License](https://img.shields.io/npm/l/commitlint-pre-push.svg?color=blue)](https://github.com/igordanchenko/commitlint-pre-push/blob/main/LICENSE)
 
-</div>
-
 Lint exactly the commits being pushed — an accurate
 [commitlint](https://commitlint.js.org/) wrapper for the `pre-push` git hook.
+
+</div>
 
 ## Why
 
