@@ -41,10 +41,10 @@ const env = {
 /**
  * @param {string} command
  * @param {string[]} args
- * @param {{ cwd: string, env?: NodeJS.ProcessEnv, input?: string | Buffer[], shell?: boolean }} options
+ * @param {{ cwd: string, env?: NodeJS.ProcessEnv, input?: string | Buffer[], shell?: boolean, keepStdinOpen?: boolean }} options
  * @returns {Promise<RunResult>}
  */
-function run(command, args, { cwd, env: environment = env, input = "", shell = false }) {
+function run(command, args, { cwd, env: environment = env, input = "", shell = false, keepStdinOpen = false }) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, { cwd, env: environment, shell });
     let stdout = "";
@@ -58,7 +58,11 @@ function run(command, args, { cwd, env: environment = env, input = "", shell = f
     child.on("error", reject);
     child.on("close", (status) => resolve({ status, stdout, stderr }));
     child.stdin.on("error", () => {});
-    if (Array.isArray(input)) {
+    if (keepStdinOpen) {
+      // hold the pipe open without writing; release it once the child exits
+      // so the `close` event (which waits on all stdio) can fire
+      child.on("exit", () => child.stdin.end());
+    } else if (Array.isArray(input)) {
       // deliver each buffer as a separate chunk; the pause must outlast the
       // child's startup, or the writes coalesce in the pipe buffer and arrive
       // as a single chunk before the child begins reading
@@ -331,6 +335,19 @@ describe("commitlint-pre-push", { concurrency: os.availableParallelism() }, () =
     const result = await fixture.run("");
 
     assert.equal(result.status, 0, combinedOutput(result));
+    assert.match(result.stdout, /no new commits to lint/);
+  });
+
+  it("falls back to a dry run when stdin is held open without input", { timeout: 30_000 }, async (context) => {
+    const fixture = await createFixture(context);
+    await fixture.commit("feat: initial");
+    await fixture.push("-u", "main");
+
+    const result = await run(process.execPath, [cliPath], { cwd: fixture.repo, keepStdinOpen: true });
+
+    assert.equal(result.status, 0, combinedOutput(result));
+    assert.match(result.stderr, /timed out waiting for pre-push input/);
+    assert.match(result.stdout, /dry run/);
     assert.match(result.stdout, /no new commits to lint/);
   });
 

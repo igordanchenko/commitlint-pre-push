@@ -71,6 +71,15 @@ npx --no -- commitlint-pre-push
 That's it — zero configuration. The remote, refs, and commit ranges all come
 from the data git passes to the hook.
 
+Outside the hook, if no pre-push input arrives on stdin within a couple of
+seconds, the tool falls back to a [dry run](#dry-run) instead of waiting
+indefinitely. Non-interactive callers can skip the wait by redirecting stdin
+from `/dev/null`:
+
+```shell
+npx --no -- commitlint-pre-push < /dev/null
+```
+
 ### Dry run
 
 Run it manually in a terminal to preview what a push of the current branch would
