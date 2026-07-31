@@ -314,6 +314,24 @@ describe("commitlint-pre-push", { concurrency: os.availableParallelism() }, () =
     assert.match(result.stdout, /linting 1 commit\b/);
   });
 
+  it("lints a new branch as a single commitlint range", async (context) => {
+    const fixture = await createFixture(context);
+    await fixture.commit("feat: initial");
+    await fixture.push("main");
+    await fixture.git("checkout", "-b", "feature");
+    await fixture.commit("feat: one");
+    const localSha = await fixture.commit("bad commit message");
+
+    const result = await fixture.run(fixture.refUpdate("refs/heads/feature", localSha, ZERO_SHA));
+
+    assert.equal(result.status, 1, combinedOutput(result));
+    assert.match(result.stdout, /linting 2 commits\b/);
+    assert.match(combinedOutput(result), /type may not be empty/);
+    // a single range invocation reports through commitlint itself, without the
+    // per-commit loop's `✖ <sha> <subject>` failure headers
+    assert.doesNotMatch(result.stderr, /✖ [0-9a-f]{7} /);
+  });
+
   it("dry run lints unpushed commits on the current branch", async (context) => {
     const fixture = await createFixture(context);
     await fixture.commit("feat: initial");

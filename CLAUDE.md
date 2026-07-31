@@ -43,11 +43,13 @@ Three source files:
      the `--not --remotes` exclusion is what guarantees commits already
      published to _any_ remote are never re-linted (a documented core promise).
      `^<remoteSha>` is only used when the sha is `commitExists()` locally.
-  4. Fast path: single branch update whose commit set equals the plain
-     `localSha ^remoteSha` range → one `commitlint --from --to` invocation with
-     inherited stdio. Otherwise lint each commit individually by piping
-     `git log -1 --format=%B` output to commitlint's stdin (this preserves
-     commitlint's default merge-commit ignores).
+  4. Fast path: single branch update whose commit set equals a plain
+     `localSha ^<base>` range, where `<base>` is the previous remote sha or the
+     parent of the oldest commit (covers new-branch pushes) → one
+     `commitlint --from --to` invocation with inherited stdio. Otherwise lint
+     each commit individually by piping `git log -1 --format=%B` output to
+     commitlint's stdin (this preserves commitlint's default merge-commit
+     ignores).
 
 `resolveCommitlint()` locates the consuming project's own `@commitlint/cli` via
 `require.resolve` from `process.cwd()` (so the user's config/version is used
