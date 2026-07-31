@@ -4,6 +4,7 @@ import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node
 import os from "node:os";
 import { delimiter, dirname, isAbsolute, join } from "node:path";
 import { describe, it } from "node:test";
+import { setTimeout as delay } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
 
 import { which } from "../lib/which.js";
@@ -40,7 +41,7 @@ const env = {
 /**
  * @param {string} command
  * @param {string[]} args
- * @param {{ cwd: string, env?: NodeJS.ProcessEnv, input?: string, shell?: boolean }} options
+ * @param {{ cwd: string, env?: NodeJS.ProcessEnv, input?: string | Buffer[], shell?: boolean }} options
  * @returns {Promise<RunResult>}
  */
 function run(command, args, { cwd, env: environment = env, input = "", shell = false }) {
@@ -57,7 +58,20 @@ function run(command, args, { cwd, env: environment = env, input = "", shell = f
     child.on("error", reject);
     child.on("close", (status) => resolve({ status, stdout, stderr }));
     child.stdin.on("error", () => {});
-    child.stdin.end(input);
+    if (Array.isArray(input)) {
+      // deliver each buffer as a separate chunk; the pause must outlast the
+      // child's startup, or the writes coalesce in the pipe buffer and arrive
+      // as a single chunk before the child begins reading
+      (async () => {
+        for (const [index, chunk] of input.entries()) {
+          if (index > 0) await delay(500);
+          child.stdin.write(chunk);
+        }
+        child.stdin.end();
+      })().catch(reject);
+    } else {
+      child.stdin.end(input);
+    }
   });
 }
 
@@ -318,6 +332,17 @@ describe("commitlint-pre-push", { concurrency: os.availableParallelism() }, () =
 
     assert.equal(result.status, 0, combinedOutput(result));
     assert.match(result.stdout, /no new commits to lint/);
+  });
+
+  it("decodes a multi-byte UTF-8 sequence split across stdin chunks", async (context) => {
+    const dir = tempDir(context);
+    const line = Buffer.from("bad€input\n", "utf8");
+
+    // split in the middle of the three-byte € sequence
+    const result = await run(process.execPath, [cliPath], { cwd: dir, input: [line.subarray(0, 4), line.subarray(4)] });
+
+    assert.equal(result.status, 1, combinedOutput(result));
+    assert.match(result.stderr, /unexpected pre-push input: "bad€input"/);
   });
 
   it("ignores merge-style commit messages", async (context) => {
