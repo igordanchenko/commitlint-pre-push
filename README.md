@@ -65,6 +65,13 @@ Add it to your `pre-push` hook. For example, with
 
 ```shell
 # .husky/pre-push
+commitlint-pre-push
+```
+
+Or with a plain `.git/hooks/pre-push` hook:
+
+```shell
+#!/bin/sh
 npx --no -- commitlint-pre-push
 ```
 
