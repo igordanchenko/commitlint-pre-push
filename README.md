@@ -106,4 +106,4 @@ npx --no -- commitlint-pre-push
 
 ## License
 
-MIT © [Igor Danchenko](https://github.com/igordanchenko)
+MIT © 2026 [Igor Danchenko](https://github.com/igordanchenko)
