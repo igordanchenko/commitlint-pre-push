@@ -2,9 +2,14 @@
 
 ## Commands
 
-- `npm run ci` — lint + typecheck + test (local-only shorthand; CI runs the
-  steps separately)
-- `npm run lint` — ESLint
+- `npm run ci` — lint + typecheck + test (local shorthand mirroring the CI
+  workflow steps)
+- `npm run lint` — oxlint (`.oxlintrc.json`: oxlint defaults — the `correctness`
+  category as errors with the oxc and unicorn plugins)
+- `npm run format` — oxfmt (writes in place). Deliberately kept out of `ci` and
+  the CI workflow: a routine oxfmt version bump can change the formatting output
+  and fail CI on files nobody touched. lint-staged formats staged files on
+  commit instead.
 - `npm run typecheck` — `tsc` (checks JSDoc types, `noEmit`)
 - `npm run test` — full test suite (`node --test`); ~10s, spent almost entirely
   on spawning real git to build repo fixtures in temp dirs

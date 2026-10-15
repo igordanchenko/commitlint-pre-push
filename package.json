@@ -19,11 +19,12 @@
     "node": ">=22"
   },
   "scripts": {
-    "lint": "eslint",
+    "prepare": "husky",
+    "lint": "oxlint",
+    "format": "oxfmt",
     "typecheck": "tsc",
     "test": "node --test",
-    "ci": "npm run lint && npm run typecheck && npm run test",
-    "prepare": "husky"
+    "ci": "npm run lint && npm run typecheck && npm run test"
   },
   "peerDependencies": {
     "@commitlint/cli": "^19 || ^20 || ^21"
@@ -31,13 +32,11 @@
   "devDependencies": {
     "@commitlint/cli": "21.2.3",
     "@commitlint/config-conventional": "21.2.3",
-    "@eslint/js": "10.0.1",
     "@types/node": "24.19.1",
-    "eslint": "10.12.0",
-    "globals": "17.13.0",
     "husky": "9.1.7",
     "lint-staged": "17.6.0",
-    "prettier": "3.9.9",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0",
     "typescript": "7.0.2"
   },
   "keywords": [

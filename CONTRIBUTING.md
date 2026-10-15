@@ -43,12 +43,13 @@ npm install
 
 ### Scripts
 
-| Script              | Purpose                                          |
-| ------------------- | ------------------------------------------------ |
-| `npm test`          | Run the test suite (`node --test`)               |
-| `npm run lint`      | Run ESLint                                       |
-| `npm run typecheck` | Type-check JSDoc annotations with `tsc`          |
-| `npm run ci`        | Lint + typecheck + test (what CI runs on a push) |
+| Script              | Purpose                                 |
+| ------------------- | --------------------------------------- |
+| `npm test`          | Run the test suite (`node --test`)      |
+| `npm run lint`      | Lint with oxlint                        |
+| `npm run format`    | Format with oxfmt                       |
+| `npm run typecheck` | Type-check JSDoc annotations with `tsc` |
+| `npm run ci`        | Lint + typecheck + test                 |
 
 The test suite builds real git repositories in temporary directories, so a full
 run takes a couple of minutes. To run a subset of tests by name:
@@ -71,7 +72,7 @@ Common types: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `ci`, `build`.
 
 ### Code style
 
-- ESLint and Prettier run on staged files via `lint-staged`. You normally don't
+- oxlint and oxfmt run on staged files via `lint-staged`. You normally don't
   need to run them manually — the pre-commit hook formats and fixes on its own.
 - If a hook fails, fix the reported issue and re-stage rather than bypassing
   with `--no-verify`.
